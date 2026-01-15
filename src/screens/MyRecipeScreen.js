@@ -6,6 +6,7 @@ import {
     Image,
     StyleSheet,
     ActivityIndicator,
+    Alert
   } from "react-native";
   import React, { useEffect, useState } from "react";
   import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -53,8 +54,8 @@ import {
     };
   
     const editrecipe = (recipe, index) => {
-        
-        navigation.navigate("RecipesFormScreen", { recipeToEdit: recipe, recipeIndex:index });
+        const onrecipeEdited = Alert.alert("Edit recipe success");
+        navigation.navigate("RecipesFormScreen", { recipeToEdit: recipe, recipeIndex:index, onrecipeEdited });
     };
   
     return (
