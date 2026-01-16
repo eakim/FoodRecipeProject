@@ -38,10 +38,12 @@ import {
   
       fetchrecipes();
     }, []);
-  
+    const onrecipeEdited = (data) => {
+        setrecipes(data);
+    }
     const handleAddrecipe = () => {
-        navigation.navigate("RecipesFormScreen");
-
+        navigation.navigate("RecipesFormScreen", {onrecipeEdited});
+        
     };
   
     const handlerecipeClick = (recipe) => {
@@ -49,12 +51,22 @@ import {
 
     };
     const deleterecipe = async (index) => {
-        const newRecipes = [...recipes];
-        
+        try{
+            console.log(recipes, index);
+            let updateRec=[...recipes];
+            updateRec.splice(index,1);
+            console.log(updateRec)
+            setrecipes(updateRec);
+            await AsyncStorage.setItem("customrecipes", JSON.stringify(updateRec));
+    
+
+        } catch(e){
+            console.log(e);
+        }
     };
-  
+    
     const editrecipe = (recipe, index) => {
-        const onrecipeEdited = Alert.alert("Edit recipe success");
+        
         navigation.navigate("RecipesFormScreen", { recipeToEdit: recipe, recipeIndex:index, onrecipeEdited });
     };
   
@@ -91,7 +103,7 @@ import {
   
                   {/* Edit and Delete Buttons */}
                   <View style={styles.actionButtonsContainer} testID="editDeleteButtons">
-                  <TouchableOpacity  onPress={()=>editrecipe(recipe, index)} style={styles.editButton}>
+                  <TouchableOpacity  onPress={()=>editrecipe(recipe, recipe.recipeIndex)} style={styles.editButton}>
                     <Text style={styles.editButtonText}>Edit</Text>
                     </TouchableOpacity>
             

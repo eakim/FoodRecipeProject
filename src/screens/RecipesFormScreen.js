@@ -5,7 +5,6 @@ import {widthPercentageToDP as wp,heightPercentageToDP as hp,} from "react-nativ
 
 export default function RecipesFormScreen({ route, navigation }) {
   const { recipeToEdit, recipeIndex, onrecipeEdited } = route.params || {};
-  console.log("param", route.params);
   const [title, setTitle] = useState(recipeToEdit ? recipeToEdit.title : "");
   const [image, setImage] = useState(recipeToEdit ? recipeToEdit.image : "");
   const [description, setDescription] = useState(
@@ -14,28 +13,31 @@ export default function RecipesFormScreen({ route, navigation }) {
 
   const saverecipe = async () => {
     try{
-    const newrecipe ={title, image, description};
-    let recipes=[];
-    const getData = await AsyncStorage.getItem("customrecipes") ;
-     if(getData === undefined || !getData) recipes=[];
-     else{ recipes = JSON.parse(getData);}
-    
-      if(recipeToEdit){
-        recipes = recipes.map(
-            (item) => {
-                if(item.recipeIndex === recipeIndex)
+        const newrecipe ={title, image, description};
+        let recipes=[];
+        const getData = await AsyncStorage.getItem("customrecipes");
+        if(getData === undefined || !getData) recipes=[];
+        else recipes = JSON.parse(getData); 
+        
+        if(recipeToEdit){
+            recipes = recipes.map(
+                (item) => {
+                    if(item.recipeIndex === recipeIndex)
                     {
-                        return newrecipe;
+                        return {recipeIndex: item.recipeIndex, ...newrecipe};
                     }
-            }
-          );
-        onrecipeEdited();
-     }
-     else{
-        recipes.push(newrecipe);
-     }
-     await AsyncStorage.setItem("customrecipes", JSON.stringify(recipes));
-     navigation.goBack();
+                    else return item;
+                }
+            );
+            console.log('update', recipes);
+          
+        }
+        else{
+            recipes.push({recipeIndex:Math.floor(Math.random()*100+1), ...newrecipe});
+        }
+        await AsyncStorage.setItem("customrecipes", JSON.stringify(recipes));
+        onrecipeEdited(recipes);
+        navigation.navigate("MyFood");
     } catch(e) {
         console.log(e);
     }
